@@ -1,4 +1,3 @@
-// TODO: add use case (lucidchart) for allowEntry and allowExit specifically instead of one for both
 // TODO: check for memory leaks
 // TODO: ensure classes can not be copied
 
