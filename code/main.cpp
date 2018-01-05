@@ -1,6 +1,3 @@
-// TODO: check for memory leaks
-// TODO: ensure classes can not be copied
-
 #include <iostream>
 #include <signal.h>
 
@@ -43,7 +40,7 @@ void entryExitInterpreter(int value)
     switch(value)
     {
         case success:
-            std::cout << "Entry allowed." << std::endl;
+            std::cout << "Action completed." << std::endl;
             break;
         case incorrectDoorState:
             std::cout << "Door is not currently in a state where it can be moved." << std::endl;
@@ -128,9 +125,6 @@ int main(int argc, char const *argv[])
                 std::cout << "\n==Sluice 1 (standard)==\n";
                 while (choice != '9')
                 {
-                    // TODO: merge exit left/right & entry left/right into singular functions
-                    // Update: this should work now? (somehow can't test atm)
-
                     std::cout << "[1]   Allow entry\n"
                               << "[2]   Move boat up/down\n"
                               << "[3]   Allow exiting\n"

@@ -1,3 +1,6 @@
+// Destructor, copy constructor and assignment operator overloading is not
+// needed as this class does not contain allocated memory
+
 #include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
@@ -8,9 +11,7 @@
 
 SimulationCommunicator::SimulationCommunicator(int port)
 {
-	// std::cout << "SimulationCommunicator being created with port " << port << std::endl;
 	sock = CreateTCPClientSocket (port);
-	// std::cout << "Socket returned by CreateTCPClientSocket: " << sock << std::endl;
 }
 
 SimulationCommunicator::~SimulationCommunicator()
@@ -20,7 +21,6 @@ SimulationCommunicator::~SimulationCommunicator()
 
 char* SimulationCommunicator::sendMessage(const char message[])
 {
-	// char testString[] = "GetDoorLeft;";
 	// std::cout << "[DBG] Message to send (SimulationCommunicator): " << message << std::endl;
 	int size = sizeOfMessage(message);
 	// std::cout << "[DBG] Size: " << size << std::endl;

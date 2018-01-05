@@ -15,6 +15,8 @@ public:
 	int greenLight();
 
 private:
+	TrafficLight(const TrafficLight&);
+	TrafficLight& operator= (const TrafficLight&);
 	CommunicationHandler& cHandler;
 	bool messageReceived;
 	int location;

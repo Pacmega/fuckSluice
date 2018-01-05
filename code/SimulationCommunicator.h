@@ -14,14 +14,13 @@ public:
 
 	char* sendMessage(const char message[]);
 
-
 private:
 	// int port; <- Maybe not used since the auxiliary handles this?
 	int sock; // Socket descriptor
 	char echoBuffer[RCVBUFSIZE];
 
 	int sizeOfMessage(const char message[]);
-	char* receiveMessage();
+	char* receiveMessage();	
 };
 
 #endif

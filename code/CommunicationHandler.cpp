@@ -1,3 +1,6 @@
+// Destructor, copy constructor and assignment operator overloading is not
+// needed as this class does not contain allocated memory
+
 #include <iostream>
 #include <string.h>
 
@@ -445,9 +448,6 @@ LightState CommunicationHandler::getLightState(int lightLocation)
 		std::string redLightReceived = simulation.sendMessage(redLightMessage);
 		std::string greenLightReceived = simulation.sendMessage(greenLightMessage);
 
-		// std::cout << "Red light state: " << redLightReceived << std::endl;
-		// std::cout << "Green light state: " << greenLightReceived << std::endl;
-
 		if (redLightReceived == "on" && greenLightReceived == "off")
 		{
 			lState = redLightOn;
@@ -490,10 +490,3 @@ WaterLevel CommunicationHandler::getWaterLevel()
 
 	return wLevel;
 }
-
-// int main(int argc, char const *argv[])
-// {
-// 	CommunicationHandler henk(5555);
-// 	std::cout << henk.getDoorState(left) << std::endl;
-// 	return 0;
-// }

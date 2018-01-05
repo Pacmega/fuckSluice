@@ -1,3 +1,6 @@
+// Destructor, copy constructor and assignment operator overloading is not
+// needed as this class does not contain allocated memory
+
 #include <iostream>
 
 #include "Door.h"
@@ -262,19 +265,19 @@ int Door::closeDoor()
 	}
 	else
 	{
-		return success; // Door opened
-	}
-
-	if (type == fastLock)
-	{
-		// Door should be locked
-		messageReceived = cHandler.lockDoor(side);
-
-		if (!messageReceived)
+		if (type == fastLock)
 		{
-			return noAckReceived; // Message was not acknowledged by the simulator
+			// Door should be locked
+			messageReceived = cHandler.lockDoor(side);
+
+			if (!messageReceived)
+			{
+				return noAckReceived; // Message was not acknowledged by the simulator
+			}
+			// Door is locked
 		}
-		// Door is locked
+		
+		return success; // Door opened
 	}
 }
 
@@ -365,7 +368,6 @@ void Door::stopValves()
 		// std::cout << "[DBG] middleValveOpen restoring: " << savedState.middleValveOpen << std::endl;
 		// std::cout << "[DBG] bottomValveOpen restoring: " << savedState.bottomValveOpen << std::endl;
 
-		// TODO: row 2 and 1 closed instead of opened, does changing that fix anything? (check)
 		if (savedState.topValveOpen)
 		{
 			topValves.openValveRow();

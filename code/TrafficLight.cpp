@@ -1,3 +1,6 @@
+// Destructor, copy constructor and assignment operator overloading is not
+// needed as this class does not contain allocated memory
+
 #include <iostream>
 #include "lib/enums.h"
 #include "lib/returnValues.h"
