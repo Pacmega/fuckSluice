@@ -5,11 +5,10 @@
 #include "lib/enums.h"
 #include "lib/returnValues.h"
 
-// TODO: is it possible to pass references instead of pointers?
 Sluice::Sluice(int port)
 	: cHandler(port)
-	, leftDoor(&cHandler, (port==5557) ? fastLock : noLock, left)
-	, rightDoor(&cHandler, (port==5557) ? fastLock : noLock, right)
+	, leftDoor(cHandler, (port==5557) ? fastLock : noLock, left)
+	, rightDoor(cHandler, (port==5557) ? fastLock : noLock, right)
 {
 
 }
@@ -21,8 +20,6 @@ Sluice::~Sluice()
 
 void Sluice::passInterrupt()
 {
-	// TODO: This interrupt takes ages to complete. Fix that?
-
 	leftDoor.interruptReaction();
 	rightDoor.interruptReaction();
 
@@ -44,19 +41,17 @@ void Sluice::passInterrupt()
 				// Start itself handles the difference between up and down.
 				start();
 				break;
-			case allowingEntryLeft:
+			case allowingEntry:
 				allowEntry();
 				break;
-			case allowingEntryRight:
-				allowEntry();
-				break;
-			case allowingExitLeft:
+			case allowingExit:
 				allowExit();
 				break;
-			case allowingExitRight:
-				allowExit();
+			case waitingForCommand:
+				// Do nothing
 				break;
 		}
+		emergency = false;
 	}
 }
 
@@ -276,7 +271,6 @@ int Sluice::start()
 	{
 		// There was an emergency, which means there should be an old state to restore to.
 
-		// TODO: test if any of this works
 		if (stateBeforeEmergency == sluicingUp)
 		{
 			return sluiceUp(currentWLevel);
@@ -297,16 +291,15 @@ int Sluice::start()
 
 int Sluice::allowEntry()
 {
-	// TODO: is it necessary to remember which side was being opened? *doesn't seem like it, there are no arguments being passed*
 	WaterLevel currentWLevel = cHandler.getWaterLevel();
 	if (currentWLevel == low)
 	{
-		stateBeforeEmergency = allowingEntryLeft;
+		stateBeforeEmergency = allowingEntry;
 		return leftDoor.allowEntry();
 	}
 	else if (currentWLevel == high)
 	{
-		stateBeforeEmergency = allowingEntryRight;
+		stateBeforeEmergency = allowingEntry;
 		return rightDoor.allowEntry();
 	}
 	else
@@ -317,16 +310,15 @@ int Sluice::allowEntry()
 
 int Sluice::allowExit()
 {
-	// TODO: is it necessary to remember which side was being opened? *doesn't seem like it, there are no arguments being passed*
 	WaterLevel currentWLevel = cHandler.getWaterLevel();
 	if (currentWLevel == low)
 	{
-		stateBeforeEmergency = allowingEntryLeft;
+		stateBeforeEmergency = allowingExit;
 		return leftDoor.allowExit();
 	}
 	else if (currentWLevel == high)
 	{
-		stateBeforeEmergency = allowingEntryRight;
+		stateBeforeEmergency = allowingExit;
 		return rightDoor.allowExit();
 	}
 	else

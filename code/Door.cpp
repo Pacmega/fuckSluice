@@ -6,7 +6,7 @@
 #include "lib/enums.h"
 #include "lib/returnValues.h"
 
-Door::Door(CommunicationHandler* existingHandler, DoorType Type, DoorSide Side)
+Door::Door(CommunicationHandler& existingHandler, DoorType Type, DoorSide Side)
 	: cHandler(existingHandler)
 	, lightInside(existingHandler, (Side==left) ? 2 : 3)
 	, lightOutside(existingHandler, (Side==left) ? 1 : 4)
@@ -57,7 +57,7 @@ int Door::allowExit()
 		return invalidLightState;
 	}
 
-	DoorState currentState = cHandler->getDoorState(side);
+	DoorState currentState = cHandler.getDoorState(side);
 	int rtnval;
 
 	if (currentState == doorOpen)
@@ -99,26 +99,20 @@ int Door::allowEntry()
 		return invalidLightState;
 	}
 
-	DoorState currentState = cHandler->getDoorState(side);
+	DoorState currentState = cHandler.getDoorState(side);
 	int rtnval;
 
 	if (currentState == doorOpen)
 	{
-		// std::cout << "[DBG] Door::allowEntry - lightOutside::greenLight (door was open)\n";
 		return lightOutside.greenLight();
 	}
 	else if (currentState == doorClosed || currentState == doorLocked || currentState == doorStopped)
 	{
-		// std::cout << "[DBG] Looking for door type " << fastLock << std::endl;
-		// std::cout << "[DBG] Got door type " << type << std::endl;
 		rtnval = openDoor();
 		switch (rtnval)
-		// Because greenLight has its own return values, we need to be change
-		// openDoor's return to distinguish it from greenLight's.
 		{
 			case success:
 				// Door has been opened
-				// std::cout << "[DBG] Door::allowEntry - lightOutside::greenLight (door has been opened)\n";
 				return lightOutside.greenLight();
 			default:
 				// Unable to open the door, return the error code
@@ -140,7 +134,7 @@ int Door::openDoor()
 	// We can assume the left door can be opened when waterLevel = low,
 	// while the right door can only be opened when waterLevel = high.
 
-	WaterLevel currentWLevel = cHandler->getWaterLevel();
+	WaterLevel currentWLevel = cHandler.getWaterLevel();
 	// std::cout << "[DBG] Door side: " << side << std::endl;
 	// std::cout << "[DBG] Water level: " << currentWLevel << std::endl;
 	if (!((side == left && currentWLevel == low) || (side == right && currentWLevel == high)))
@@ -153,10 +147,10 @@ int Door::openDoor()
 	// std::cout << "[DBG] Looking for door type " << fastLock << std::endl;
 	// std::cout << "[DBG] Got door type " << type << std::endl;
 
-	if (type == fastLock || cHandler->getDoorState(side) == doorLocked)
+	if (type == fastLock || cHandler.getDoorState(side) == doorLocked)
 	{
 		// Door is locked
-		messageReceived = cHandler->unlockDoor(side);
+		messageReceived = cHandler.unlockDoor(side);
 
 		if (!messageReceived)
 		{
@@ -165,19 +159,19 @@ int Door::openDoor()
 		// Door is not locked
 	}
 
-	messageReceived = cHandler->openDoor(side);
+	messageReceived = cHandler.openDoor(side);
 	if (!messageReceived)
 	{
 		return noAckReceived; // Message was not acknowledged by the simulator
 	}
 
 	savedState.savedDoorState = doorOpening;
-	DoorState currentState = cHandler->getDoorState(side);
+	DoorState currentState = cHandler.getDoorState(side);
 	do
 	{
 		if (currentState == doorStopped)
 		{
-			messageReceived = cHandler->openDoor(side);
+			messageReceived = cHandler.openDoor(side);
 			
 			if (!messageReceived)
 			{
@@ -188,7 +182,7 @@ int Door::openDoor()
 		{
 			return motorDamaged;
 		}
-		currentState = cHandler->getDoorState(side);
+		currentState = cHandler.getDoorState(side);
 	} while (!interruptCaught && currentState != doorOpen);
 
 	if (currentState != doorOpen)
@@ -240,26 +234,26 @@ int Door::closeDoor()
 		bottomValves.closeValveRow();
 	}
 
-	messageReceived = cHandler->closeDoor(side);
+	messageReceived = cHandler.closeDoor(side);
 	if (!messageReceived)
 	{
 		return noAckReceived; // Message was not acknowledged by the simulator
 	}
 
 	savedState.savedDoorState = doorClosing;
-	DoorState currentState = cHandler->getDoorState(side);
+	DoorState currentState = cHandler.getDoorState(side);
 	do
 	{
 		if (currentState == doorStopped)
 		{
-			messageReceived = cHandler->closeDoor(side);
+			messageReceived = cHandler.closeDoor(side);
 			
 			if (!messageReceived)
 			{
 				return noAckReceived; // Message was not acknowledged by the simulator
 			}
 		}
-		currentState = cHandler->getDoorState(side);
+		currentState = cHandler.getDoorState(side);
 	} while (!interruptCaught && currentState != doorClosed);
 
 	if (currentState != doorClosed)
@@ -274,7 +268,7 @@ int Door::closeDoor()
 	if (type == fastLock)
 	{
 		// Door should be locked
-		messageReceived = cHandler->lockDoor(side);
+		messageReceived = cHandler.lockDoor(side);
 
 		if (!messageReceived)
 		{
@@ -288,7 +282,7 @@ int Door::stopDoor()
 {
 	if (interruptCaught)
 	{
-		DoorState currentState = cHandler->getDoorState(side);
+		DoorState currentState = cHandler.getDoorState(side);
 		if (currentState == doorLocked || currentState == doorClosed)
 		{
 			// The door is closed, but valves may be open.
@@ -300,7 +294,7 @@ int Door::stopDoor()
 			// The door is in the process of either opening or closing.
 			// Don't save the current state, if it's stopped there is no way to know whether it was opening or closing.
 			// Whether it was opening or closing was set when openDoor() or closeDoor() was called.
-			cHandler->stopDoor(side);
+			cHandler.stopDoor(side);
 		}
 		else
 		{
@@ -333,7 +327,7 @@ int Door::stopDoor()
 			// These are door states where we didn't need to do anything to stop in the first place.
 		}
 	}
-	cHandler->stopDoor(side);
+	cHandler.stopDoor(side);
 	return noAckReceived;
 }
 
@@ -346,9 +340,9 @@ void Door::stopValves()
 		savedState.middleValveOpen = middleValves.getValveRowOpened();
 		savedState.bottomValveOpen = bottomValves.getValveRowOpened();
 
-		std::cout << "[DBG] topValveOpen saved: " << savedState.topValveOpen << std::endl;
-		std::cout << "[DBG] middleValveOpen saved: " << savedState.middleValveOpen << std::endl;
-		std::cout << "[DBG] bottomValveOpen saved: " << savedState.bottomValveOpen << std::endl;
+		// std::cout << "[DBG] topValveOpen saved: " << savedState.topValveOpen << std::endl;
+		// std::cout << "[DBG] middleValveOpen saved: " << savedState.middleValveOpen << std::endl;
+		// std::cout << "[DBG] bottomValveOpen saved: " << savedState.bottomValveOpen << std::endl;
 
 		if (savedState.topValveOpen)
 		{
@@ -367,22 +361,22 @@ void Door::stopValves()
 	{
 		// Reopen valves that were open before the stop.
 
-		std::cout << "[DBG] topValveOpen restoring: " << savedState.topValveOpen << std::endl;
-		std::cout << "[DBG] middleValveOpen restoring: " << savedState.middleValveOpen << std::endl;
-		std::cout << "[DBG] bottomValveOpen restoring: " << savedState.bottomValveOpen << std::endl;
+		// std::cout << "[DBG] topValveOpen restoring: " << savedState.topValveOpen << std::endl;
+		// std::cout << "[DBG] middleValveOpen restoring: " << savedState.middleValveOpen << std::endl;
+		// std::cout << "[DBG] bottomValveOpen restoring: " << savedState.bottomValveOpen << std::endl;
 
 		// TODO: row 2 and 1 closed instead of opened, does changing that fix anything? (check)
 		if (savedState.topValveOpen)
 		{
-			cHandler->valveOpen(side, 3);
+			topValves.openValveRow();
 		}
 		if (savedState.middleValveOpen)
 		{
-			cHandler->valveOpen(side, 2);
+			middleValves.openValveRow();
 		}
 		if (savedState.bottomValveOpen)
 		{
-			cHandler->valveOpen(side, 1);
+			bottomValves.openValveRow();
 		}
 	}
 }

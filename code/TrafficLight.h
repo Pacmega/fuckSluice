@@ -7,7 +7,7 @@
 class TrafficLight
 {
 public:
-	TrafficLight(CommunicationHandler* existingHandler, int location);
+	TrafficLight(CommunicationHandler& existingHandler, int location);
 	~TrafficLight();
 
 	LightState getLightState();
@@ -15,7 +15,7 @@ public:
 	int greenLight();
 
 private:
-	CommunicationHandler* cHandler;
+	CommunicationHandler& cHandler;
 	bool messageReceived;
 	int location;
 };

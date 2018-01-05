@@ -7,7 +7,7 @@
 class ValveRow
 {
 public:
-	ValveRow(CommunicationHandler* existingHandler, int Row, DoorSide Side);
+	ValveRow(CommunicationHandler& existingHandler, int Row, DoorSide Side);
 	~ValveRow();
 
 	bool openValveRow();
@@ -15,7 +15,7 @@ public:
 	bool getValveRowOpened();
 
 private:
-	CommunicationHandler* cHandler;
+	CommunicationHandler& cHandler;
 	bool messageReceived;
 	int row;
 	DoorSide side;	

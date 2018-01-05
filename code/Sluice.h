@@ -15,9 +15,9 @@ public:
 	int allowEntry();
     int allowExit();
     void passInterrupt();
-    CommunicationHandler cHandler;
 
 private:
+	CommunicationHandler cHandler;
 	Door leftDoor;
 	Door rightDoor;
 

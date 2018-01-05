@@ -32,12 +32,11 @@ enum LightState
 
 enum SluiceState
 {
-	allowingEntryLeft,
-	allowingEntryRight,
-	allowingExitLeft,
-	allowingExitRight,
+	allowingEntry,
+	allowingExit,
 	sluicingUp,
-	sluicingDown
+	sluicingDown,
+	waitingForCommand
 };
 
 enum DoorType

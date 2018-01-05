@@ -4,7 +4,7 @@
 #include "CommunicationHandler.h"
 #include "TrafficLight.h"
 
-TrafficLight::TrafficLight(CommunicationHandler* existingHandler, int Location)
+TrafficLight::TrafficLight(CommunicationHandler& existingHandler, int Location)
     : cHandler(existingHandler)
 {
     location = Location;
@@ -19,7 +19,7 @@ LightState TrafficLight::getLightState()
 {
     // Calls the getLightState function from the Communication Handler,
     // passing it the location of this specific light.
-    return cHandler->getLightState(location);
+    return cHandler.getLightState(location);
 }
 
 int TrafficLight::redLight()
@@ -29,7 +29,7 @@ int TrafficLight::redLight()
         case redLightOn:
             return success; // Done. Nothing to change.
         case greenLightOn:
-            switch (cHandler->redLight(location))
+            switch (cHandler.redLight(location))
             {
                 case 0:
                     return success; // Success
@@ -57,7 +57,7 @@ int TrafficLight::greenLight()
             return success; // Done. Nothing to change.
         case redLightOn:
             // std::cout << "[DBG] GreenLight being turned on" << std::endl;
-            switch (cHandler->greenLight(location))
+            switch (cHandler.greenLight(location))
             {
                 case 0:
                     return success; // Success
