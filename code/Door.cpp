@@ -138,17 +138,12 @@ int Door::openDoor()
 	// while the right door can only be opened when waterLevel = high.
 
 	WaterLevel currentWLevel = cHandler.getWaterLevel();
-	// std::cout << "[DBG] Door side: " << side << std::endl;
-	// std::cout << "[DBG] Water level: " << currentWLevel << std::endl;
 	if (!((side == left && currentWLevel == low) || (side == right && currentWLevel == high)))
 	{
 		// The water is not at the right level to open the left door,
 		// but the water also isn't at the right level to open the right door
 		return incorrectWaterLevel; // Water level invalid for opening door
 	}
-
-	// std::cout << "[DBG] Looking for door type " << fastLock << std::endl;
-	// std::cout << "[DBG] Got door type " << type << std::endl;
 
 	if (type == fastLock || cHandler.getDoorState(side) == doorLocked)
 	{
@@ -343,10 +338,6 @@ void Door::stopValves()
 		savedState.middleValveOpen = middleValves.getValveRowOpened();
 		savedState.bottomValveOpen = bottomValves.getValveRowOpened();
 
-		// std::cout << "[DBG] topValveOpen saved: " << savedState.topValveOpen << std::endl;
-		// std::cout << "[DBG] middleValveOpen saved: " << savedState.middleValveOpen << std::endl;
-		// std::cout << "[DBG] bottomValveOpen saved: " << savedState.bottomValveOpen << std::endl;
-
 		if (savedState.topValveOpen)
 		{
 			topValves.closeValveRow();
@@ -363,10 +354,6 @@ void Door::stopValves()
 	else
 	{
 		// Reopen valves that were open before the stop.
-
-		// std::cout << "[DBG] topValveOpen restoring: " << savedState.topValveOpen << std::endl;
-		// std::cout << "[DBG] middleValveOpen restoring: " << savedState.middleValveOpen << std::endl;
-		// std::cout << "[DBG] bottomValveOpen restoring: " << savedState.bottomValveOpen << std::endl;
 
 		if (savedState.topValveOpen)
 		{

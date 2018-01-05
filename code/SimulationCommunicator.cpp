@@ -21,10 +21,7 @@ SimulationCommunicator::~SimulationCommunicator()
 
 char* SimulationCommunicator::sendMessage(const char message[])
 {
-	// std::cout << "[DBG] Message to send (SimulationCommunicator): " << message << std::endl;
 	int size = sizeOfMessage(message);
-	// std::cout << "[DBG] Size: " << size << std::endl;
-	// std::cout << "Sending to: " << sock << std::endl;
 
 	if(send(sock, message, size, 0) < 0)
 	{
@@ -46,7 +43,6 @@ char* SimulationCommunicator::receiveMessage()
 	{
 		int size = sizeOfMessage(echoBuffer);
 		echoBuffer[size-1] = '\0'; // Remove the semicolon at the end of the received message
-		// std::cout << "[DBG] Message received: " << echoBuffer << std::endl;
 		return echoBuffer;
 	}
 	return NULL;

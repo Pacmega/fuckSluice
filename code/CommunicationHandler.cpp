@@ -34,7 +34,6 @@ DoorState CommunicationHandler::getDoorState(DoorSide side)
 		messageToSend = GetDoorRight;
 	}
 
-	// std::cout << "[DBG] Message to send: " << messageToSend << std::endl;
 	receivedMessage = simulation.sendMessage(messageToSend);
 	
 	// Switch cases aren't possible for strings sadly.
