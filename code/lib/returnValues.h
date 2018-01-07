@@ -11,6 +11,5 @@ const int motorDamaged = -6;
 const int interruptReceived = -7;
 const int invalidCall = -8;
 const int invalidWaterLevel = -9;
-const int workInProgress = 420;
 
 #endif

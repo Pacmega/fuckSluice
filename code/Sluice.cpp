@@ -168,6 +168,7 @@ int Sluice::sluiceUp(WaterLevel currentWLevel)
 
 	if (currentWLevel != high)
 	{
+		rightDoor.stopDoor();
 		return interruptReceived;
 	}
 	else
@@ -198,6 +199,7 @@ int Sluice::sluiceDown(WaterLevel currentWLevel)
 
 	if (currentWLevel != low)
 	{
+		leftDoor.stopDoor();
 		return interruptReceived;
 	}
 	else
@@ -224,7 +226,7 @@ int Sluice::start()
 			case low:
 				stateBeforeEmergency = sluicingUp;
 
-				if (cHandler.getDoorState(left) == doorOpen)
+				if (cHandler.getDoorState(left) != doorClosed && cHandler.getDoorState(left) != doorLocked)
 				{
 					rtnval = leftDoor.closeDoor();
 					if (rtnval != success)
@@ -245,7 +247,7 @@ int Sluice::start()
 
 			case high:
 				stateBeforeEmergency = sluicingDown;
-				if (cHandler.getDoorState(right) == doorOpen)
+				if (cHandler.getDoorState(right) != doorClosed && cHandler.getDoorState(right) != doorLocked)
 				{
 					rtnval = rightDoor.closeDoor();
 					if (rtnval != success)
@@ -276,10 +278,28 @@ int Sluice::start()
 
 		if (stateBeforeEmergency == sluicingUp)
 		{
+			if (cHandler.getDoorState(left) != doorClosed && cHandler.getDoorState(left) != doorLocked)
+			{
+				int rtnval = leftDoor.closeDoor();
+				if (rtnval != success)
+				{
+					// Don't continue if we can't close the door.
+					return rtnval;
+				}
+			}
 			return sluiceUp(currentWLevel);
 		}
 		else if (stateBeforeEmergency == sluicingDown)
 		{
+			if (cHandler.getDoorState(right) != doorClosed && cHandler.getDoorState(right) != doorLocked)
+			{
+				int rtnval = rightDoor.closeDoor();
+				if (rtnval != success)
+				{
+					// Don't continue if we can't close the door.
+					return rtnval;
+				}
+			}
 			return sluiceDown(currentWLevel);
 		}
 		else
@@ -288,8 +308,6 @@ int Sluice::start()
 			return invalidCall;
 		}
 	}
-
-	return workInProgress;
 }
 
 int Sluice::allowEntry()

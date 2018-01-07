@@ -13,9 +13,9 @@ Door::Door(CommunicationHandler& existingHandler, DoorType Type, DoorSide Side)
 	: cHandler(existingHandler)
 	, lightInside(existingHandler, (Side==left) ? 2 : 3)
 	, lightOutside(existingHandler, (Side==left) ? 1 : 4)
-	, topValves(cHandler, 3, Side)
-	, middleValves(cHandler, 2, Side)
-	, bottomValves(cHandler, 1, Side)
+	, topValves(existingHandler, 3, Side)
+	, middleValves(existingHandler, 2, Side)
+	, bottomValves(existingHandler, 1, Side)
 {
 	interruptCaught = false;
 	messageReceived = false;
@@ -36,12 +36,10 @@ void Door::interruptReaction()
 	{
 		// No interrupt was caught yet, OHSHITPANIC
 		interruptCaught = true;
-		stopDoor();
 	}
 	else
 	{
 		interruptCaught = false; // Set up for another emergency stop later on
-		stopDoor();
 	}
 }
 
@@ -185,6 +183,7 @@ int Door::openDoor()
 
 	if (currentState != doorOpen)
 	{
+		stopDoor();
 		return interruptReceived; // An interrupt was received, door was not fully opened
 	}
 	else
@@ -256,6 +255,7 @@ int Door::closeDoor()
 
 	if (currentState != doorClosed)
 	{
+		stopDoor();
 		return interruptReceived; // An interrupt was received
 	}
 	else
@@ -272,7 +272,7 @@ int Door::closeDoor()
 			// Door is locked
 		}
 		
-		return success; // Door opened
+		return success; // Door closed
 	}
 }
 

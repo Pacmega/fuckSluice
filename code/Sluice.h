@@ -11,10 +11,10 @@ public:
 	Sluice(int port);
 	~Sluice();
 	
+	void passInterrupt();
 	int start();
 	int allowEntry();
     int allowExit();
-    void passInterrupt();
 
 private:
 	CommunicationHandler cHandler;
@@ -24,9 +24,9 @@ private:
 	bool emergency;
 	SluiceState stateBeforeEmergency;
 
+	bool closeValves(DoorSide side);
 	int sluiceUp(WaterLevel currentWLevel);
 	int sluiceDown(WaterLevel currentWLevel);
-	bool closeValves(DoorSide side);
 };
 
 #endif

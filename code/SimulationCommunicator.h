@@ -4,7 +4,7 @@
 #include "lib/createTCPClientSocket.h"		// Used to create the TCP client socket
 #include "lib/enums.h"
 
-#define RCVBUFSIZE 32   /* Size of receive buffer */
+const int RCVBUFSIZE = 32;    /* Size of receive buffer */
 
 class SimulationCommunicator
 {
@@ -19,8 +19,8 @@ private:
 	int sock; // Socket descriptor
 	char echoBuffer[RCVBUFSIZE];
 
+	char* receiveMessage();
 	int sizeOfMessage(const char message[]);
-	char* receiveMessage();	
 };
 
 #endif

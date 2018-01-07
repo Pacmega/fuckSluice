@@ -18,16 +18,17 @@ class Door
 {
 private:
 	bool messageReceived;
-	bool interruptCaught;
-	CommunicationHandler& cHandler;
 	DoorType type;
 	DoorSide side;
+	bool interruptCaught;
+
+	void stopValves();
+	void resetSavedState();
+
+	CommunicationHandler& cHandler;
 	TrafficLight lightInside;
 	TrafficLight lightOutside;
 	SavedDoor savedState;
-	
-	void stopValves();
-	void resetSavedState();
 
 public:
 	Door(CommunicationHandler& existingHandler, DoorType Type, DoorSide Side);

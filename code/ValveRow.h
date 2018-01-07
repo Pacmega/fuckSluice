@@ -18,7 +18,7 @@ private:
 	CommunicationHandler& cHandler;
 	bool messageReceived;
 	int row;
-	DoorSide side;	
+	DoorSide side;
 };
 
 #endif
